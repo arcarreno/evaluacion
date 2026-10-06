@@ -1,11 +1,15 @@
 import re
 import unicodedata
 from collections import Counter, defaultdict
+from pathlib import Path
 
 try:
     import matplotlib.pyplot as plt
 except ImportError:
     plt = None
+
+BASE_DIR = Path(__file__).parent
+DOCS_DIR = BASE_DIR / "docs"
 
 STOPWORDS_ES = {
     "a", "al", "ante", "bajo", "con", "contra", "de", "del", "desde", "durante", "en", "entre",
@@ -15,7 +19,8 @@ STOPWORDS_ES = {
     "hay", "ha", "han", "se", "lo", "le", "les", "me", "te", "nos", "para", "mas", "muy"
 }
 
-DOCUMENTOS = {
+# Respaldo por si la carpeta docs/ no existe (mismo contenido que los .txt).
+_DOCUMENTOS_RESPALDO = {
     "D1": "Los sistemas de recuperación de información permiten encontrar documentos relevantes en colecciones digitales.",
     "D2": "La indexación de documentos usa términos de índice para acelerar la búsqueda de información.",
     "D3": "El procesamiento de lenguaje natural elimina stopwords y reduce palabras a sus raíces mediante stemming.",
@@ -25,10 +30,37 @@ DOCUMENTOS = {
     "D7": "Los algoritmos de aprendizaje automático pueden clasificar documentos y detectar temas relevantes.",
     "D8": "La biblioteca digital contiene libros, artículos científicos y recursos de investigación académica."
 }
+_CONSULTA_RESPALDO = "recuperacion de informacion indexacion de documentos"
+
+
+def cargar_documentos(carpeta=DOCS_DIR):
+    """Carga D1.txt, D2.txt... desde carpeta/docs/. ID = nombre del archivo."""
+    documentos = {}
+    if not carpeta.exists():
+        return {}
+    for ruta in sorted(carpeta.glob("D*.txt")):
+        doc_id = ruta.stem.upper()  # D1.txt -> D1
+        texto = ruta.read_text(encoding="utf-8").strip()
+        if texto:
+            documentos[doc_id] = texto
+    return documentos
+
+
+def cargar_consulta(carpeta=DOCS_DIR, respaldo=_CONSULTA_RESPALDO):
+    """Lee docs/consulta.txt si existe, si no usa la consulta de respaldo."""
+    ruta = carpeta / "consulta.txt"
+    if ruta.exists():
+        texto = ruta.read_text(encoding="utf-8").strip()
+        if texto:
+            return " ".join(texto.split())
+    return respaldo
+
+
+DOCUMENTOS = cargar_documentos() or dict(_DOCUMENTOS_RESPALDO)
 
 # Juicio de relevancia conocido para la consulta propuesta.
 RELEVANTES = {"D1", "D2", "D5", "D6"}
-CONSULTA = "recuperacion de informacion indexacion de documentos"
+CONSULTA = cargar_consulta()
 
 def normalizar(texto):
     texto = unicodedata.normalize("NFD", texto.lower())
@@ -143,6 +175,7 @@ def main():
     print("=" * 70)
     print("RECUPERACIÓN DE INFORMACIÓN: MÚLTIPLES DOCUMENTOS Y EVALUACIÓN")
     print("=" * 70)
+    print(f"\nDocumentos cargados desde {DOCS_DIR.name}/: {sorted(DOCUMENTOS)}")
     print(f"\nConsulta propuesta: {CONSULTA}")
     print(f"Términos procesados: {terminos_consulta}")
     print("\nDocumentos recuperados (ordenados por coincidencias):")

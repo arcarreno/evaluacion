@@ -22,5 +22,12 @@ pip install -r requirements.txt
 python evaluacion.py
 ```
 
+## Documentos externos (.txt)
+Ya no están quemados en el código. Viven en `docs/`:
+- `docs/D1.txt` ... `docs/D8.txt` → el ID es el nombre del archivo (D1.txt = D1)
+- `docs/consulta.txt` → la consulta (si no existe, usa la de respaldo)
+- Para agregar un documento nuevo, solo crea `docs/D9.txt` y corre de nuevo
+- `evaluacion.py: cargar_documentos()` y `cargar_consulta()` los leen con UTF-8
+
 ## Codespaces
 Listo para abrir en GitHub Codespaces (Python 3.11 + matplotlib preinstalado).

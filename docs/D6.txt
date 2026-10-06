@@ -1,0 +1,1 @@
+La precisión y la exhaustividad son métricas empleadas para evaluar sistemas de recuperación de información.

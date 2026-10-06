@@ -1,0 +1,1 @@
+La indexación de documentos usa términos de índice para acelerar la búsqueda de información.

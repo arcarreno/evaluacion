@@ -1,0 +1,1 @@
+Un motor de búsqueda utiliza índices invertidos para recuperar documentos relacionados con una consulta.

@@ -1,0 +1,1 @@
+Las bases de datos almacenan registros y permiten consultas mediante lenguaje SQL.
