@@ -1,0 +1,134 @@
+\documentclass[10pt,a4paper,twocolumn]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{geometry}
+\geometry{margin=2cm, columnsep=0.8cm}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning}
+\usepackage{booktabs}
+
+\title{Actividad 1 --- Construir un grafo Web}
+\author{Angel Armando Carreño González}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Tema y páginas seleccionadas}
+Tema: \textbf{Sistemas de Recuperación de Información (SRI)}.
+Se seleccionaron 9 páginas relacionadas con el tema:
+
+\begin{enumerate}
+  \item[P1] Wikipedia -- \textit{Information retrieval}
+  \item[P2] Documentación de Elasticsearch
+  \item[P3] Apache Lucene
+  \item[P4] Artículo original de PageRank (Stanford)
+  \item[P5] Google Search Central (guía de posicionamiento)
+  \item[P6] TREC (Text REtrieval Conference, NIST)
+  \item[P7] arXiv -- categoría Information Retrieval
+  \item[P8] Scikit-learn -- documentación Precision-Recall
+  \item[P9] Libro \textit{Introduction to Information Retrieval} (Manning et al., Stanford)
+\end{enumerate}
+
+\section{Enlaces registrados}
+Se registraron 18 enlaces dirigidos (una arista $A \to B$ significa que la página $A$ enlaza a $B$):
+
+\begin{center}
+\begin{tabular}{cl}
+\toprule
+\# & Enlace \\
+\midrule
+1 & P1 $\to$ P4 \\
+2 & P1 $\to$ P6 \\
+3 & P1 $\to$ P9 \\
+4 & P2 $\to$ P3 \\
+5 & P2 $\to$ P5 \\
+6 & P3 $\to$ P2 \\
+7 & P4 $\to$ P1 \\
+8 & P4 $\to$ P5 \\
+9 & P5 $\to$ P2 \\
+10 & P5 $\to$ P4 \\
+11 & P6 $\to$ P1 \\
+12 & P6 $\to$ P7 \\
+13 & P6 $\to$ P9 \\
+14 & P7 $\to$ P6 \\
+15 & P7 $\to$ P9 \\
+16 & P8 $\to$ P1 \\
+17 & P8 $\to$ P2 \\
+18 & P9 $\to$ P1 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Grafo dirigido}
+\begin{center}
+\begin{tikzpicture}[node distance=1.4cm,
+  nodo/.style={circle, draw, minimum size=0.85cm, font=\footnotesize},
+  flecha/.style={-{Stealth}, thick}]
+  \node[nodo] (P1) {P1};
+  \node[nodo] (P2) [right=of P1] {P2};
+  \node[nodo] (P3) [right=of P2] {P3};
+  \node[nodo] (P4) [below=of P1] {P4};
+  \node[nodo] (P5) [below=of P2] {P5};
+  \node[nodo] (P6) [below=of P3] {P6};
+  \node[nodo] (P7) [below=of P6] {P7};
+  \node[nodo] (P8) [left=of P4] {P8};
+  \node[nodo] (P9) [below=of P4] {P9};
+  \draw[flecha] (P1) -> (P4);
+  \draw[flecha] (P1) -> (P6);
+  \draw[flecha] (P1) to[bend left=20] -> (P9);
+  \draw[flecha] (P2) -> (P3);
+  \draw[flecha] (P2) -> (P5);
+  \draw[flecha] (P3) to[bend left=20] -> (P2);
+  \draw[flecha] (P4) -> (P1);
+  \draw[flecha] (P4) -> (P5);
+  \draw[flecha] (P5) -> (P2);
+  \draw[flecha] (P5) to[bend left=15] -> (P4);
+  \draw[flecha] (P6) -> (P1);
+  \draw[flecha] (P6) -> (P7);
+  \draw[flecha] (P6) to[bend left=15] -> (P9);
+  \draw[flecha] (P7) to[bend left=15] -> (P6);
+  \draw[flecha] (P7) -> (P9);
+  \draw[flecha] (P8) -> (P1);
+  \draw[flecha] (P8) to[bend left=15] -> (P2);
+  \draw[flecha] (P9) to[bend left=20] -> (P1);
+\end{tikzpicture}
+\end{center}
+
+\section{Nodos con más enlaces}
+\begin{center}
+\footnotesize
+\begin{tabular}{ccc}
+\toprule
+Nodo & Entrantes & Salientes \\
+\midrule
+P1 & 4 & 3 \\
+P2 & 3 & 2 \\
+P3 & 1 & 1 \\
+P4 & 2 & 2 \\
+P5 & 2 & 2 \\
+P6 & 2 & 3 \\
+P7 & 1 & 2 \\
+P8 & 0 & 2 \\
+P9 & 3 & 1 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Autoridades} (muchos entrantes): P1 (4), P2 y P9 (3). \\
+\textbf{Hubs} (muchos salientes): P1 y P6 (3).
+
+\section{Discusión: ¿muchos entrantes = la mejor página?}
+No necesariamente. El conteo de entrantes es solo una señal:
+
+\begin{itemize}
+  \item \textbf{Calidad vs.\ cantidad:} un enlace desde P6 (TREC, fuente experta) vale más que varios desde páginas periféricas. Esta es la intuición de PageRank y HITS: importan quiénes enlazan, no solo cuántos.
+  \item \textbf{Sesgo y spam:} una página puede acumular entrantes por navegación, directorios o granjas de enlaces, sin ser la más precisa ni completa.
+  \item \textbf{Rol distinto:} P9 (libro) tiene 3 entrantes y 1 saliente: es autoridad temática, pero P6 es mejor hub para descubrir recursos. ``Mejor'' depende de la necesidad: aprender (autoridad) vs.\ explorar (hub).
+  \item \textbf{Nodo aislado:} P8 no recibe enlaces pero aporta 2 salientes útiles; el indegree cero no significa inútil.
+\end{itemize}
+
+Conclusión: el indegree orienta, pero la relevancia real exige ponderar la calidad de las fuentes (PageRank), el contenido y la necesidad del usuario, igual que en evaluación SRI se combinan Precisión, Recall y ranking.
+
+\end{document}
